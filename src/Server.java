@@ -85,9 +85,6 @@ public class Server implements Index{
 	@Override
 	public boolean registerFile(int peerId, String file_name) throws RemoteException {
 		try{
-			// Add file to the peer objects index
-			Peer peer = peers.get(peerId);
-			peer.addFile(file_name);
 			// Add file to filesIndex
 			// if file is present in filesIndex add peer to list
 			if (filesIndex.containsKey(file_name)){
@@ -132,9 +129,6 @@ public class Server implements Index{
 	@Override
 	public boolean removeFile(int peerId, String file_name) throws RemoteException {
 		try{
-			// Removes file from peer object
-			Peer peer = peers.get(peerId);
-			peer.removeFile(file_name);
 			// Records that the file isn't in the peer anymore
 			if (filesIndex.containsKey(file_name)){
 				ArrayList<Integer> peerlist = filesIndex.get(file_name);
@@ -184,9 +178,7 @@ public class Server implements Index{
 		peers.remove(peerId);
 		filesIndex.values().forEach((list) -> list.remove(new Integer(peerId)));	
 		filesIndex.values().removeIf(Objects::isNull);
-		System.out.println("delete peer");
-		System.out.println(filesIndex);
-	    System.out.println(peers);
+		System.out.println("Deleted Peer :" + peerId);
 		return true;
 	}
 }

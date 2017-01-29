@@ -33,7 +33,6 @@ public class Peer {
 		this.id = id;
 		this.ip = ip;
 		this.serverPort = serverPort;
-		this.files = new ArrayList<String>();
 	}
 	
 	/**
@@ -70,37 +69,9 @@ public class Peer {
 	void setServerPort(int serverPort) {
 		this.serverPort = serverPort;
 	}
-	
-	/** Adds a file to the peer's index
-	 * @param file name
-	 */
-	void addFile (String file) {
-		Iterator<String> it = files.iterator();
-		while(it.hasNext()){
-			if (it.next().equals(file))
-				return;
-		}
-		files.add(file);
-	}
-	
-	
-	/** Removes file from peer's index
-	 * @param file name
-	 * @return true is success
-	 */
-	Boolean removeFile (String file) {
-		Iterator<String> it = files.iterator();
-		while(it.hasNext()){
-			if (it.next().equals(file)){
-				files.remove(file);
-				return true;
-			}
-		}
-		return false;
-	}
-	
+
 	public String toString() {
-				return "Server : " +ip+":"+serverPort + " Id : "+ id + " Files : "+ files;
+				return "Server : " +ip+":"+serverPort + " Id : "+ id;
 		
 	}
 
