@@ -1,17 +1,22 @@
+import java.io.File;
+import java.nio.file.Paths;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
-/**
- * @author rekha
- *
- */
+
 public class Client {
 
     /**
      * 
      */
     private Client() {}
-
+    
+    public static int myPeerID;
+    
+    public static Index index;
+    
     /**
      * @param args serverportno peerid hostport
      * serverportno - port no the peer's port is set up on
@@ -21,7 +26,7 @@ public class Client {
     public static void main(String[] args) {
 
         int serverPort = (args.length < 1) ? 0 : Integer.parseInt(args[0]);
-        int myPeerID = (args.length < 2) ? 0 : Integer.parseInt(args[1]);
+        myPeerID = (args.length < 2) ? 0 : Integer.parseInt(args[1]);
     	String host = (args.length < 3) ? null : args[2];
     	System.out.println(host);
         try {
@@ -32,7 +37,7 @@ public class Client {
             
             System.out.println("abc");
             
-            Index index = (Index) registry.lookup("Index");
+            index = (Index) registry.lookup("Index");
             System.out.println("abc");
             if (myPeerID != 0) {
             	index.resetIp(myPeerID);
@@ -40,7 +45,11 @@ public class Client {
             }
             else myPeerID = index.registerPeer(serverPort);
             
+            setUpFiles();
+            
+            index.deletePeer(myPeerID);
            
+            /*
             //int myPeerID = index.registerPeer(serverPort);
             System.out.println(myPeerID);
             
@@ -53,9 +62,27 @@ public class Client {
             
             index.deletePeer(myPeerID);
             
+            */           
+            
+            
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
         }
+        
+    }
+    
+    static void setUpFiles(){
+    	File[] files = new File(Paths.get("../TestFiles/").toString()).listFiles();
+		for (File file : files) {
+		    if (file.isFile()) {
+		        System.out.println(file.getName());
+		        try {
+					index.registerFile(myPeerID, file.getName());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+		    }
+		}
     }
 }

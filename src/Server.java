@@ -5,6 +5,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -181,7 +182,7 @@ public class Server implements Index{
 	@Override
 	public boolean deletePeer(int peerId) throws RemoteException {
 		peers.remove(peerId);
-		filesIndex.forEach((file,list) -> list.remove(peerId));	
+		filesIndex.values().forEach((list) -> list.remove(new Integer(peerId)));	
 		filesIndex.values().removeIf(Objects::isNull);
 		System.out.println("delete peer");
 		System.out.println(filesIndex);
