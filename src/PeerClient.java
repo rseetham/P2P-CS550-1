@@ -33,9 +33,6 @@ public class PeerClient {
 	    	System.out.println(host);
 	        try {
 	            Registry registry = LocateRegistry.getRegistry(host);
-	            //Hello stub = (Hello) registry.lookup("Hello");
-	            //String response = stub.sayHello();
-	            //System.out.println("response: " + response);
 	            
 	            System.out.println("abc");
 	            
@@ -49,61 +46,11 @@ public class PeerClient {
 	            
 	            setUpFiles();
 	            
-	            index.deletePeer(myPeerID);
-	           
-	            /*
-	            //int myPeerID = index.registerPeer(serverPort);
-	            System.out.println(myPeerID);
+	            runningTest();
 	            
-	            index.registerFile(myPeerID, "foo1.txt");
-	            index.registerFile(myPeerID, "foo6.txt");
-	            index.registerFile(myPeerID, "foo7.txt");
-	            System.out.println(index.lookUp("foo6.txt"));
-	            index.removeFile(myPeerID, "foo6.txt");
-	            System.out.println(index.lookUp("foo6.txt"));
-	            
-	            index.deletePeer(myPeerID);
-	            
-	            */
+	            //index.deletePeer(myPeerID);
 	            
 			    
-			    byte[] aByte = new byte[1];
-		        int bytesRead;
-
-		        Socket clientSocket = null;
-		        InputStream is = null;
-
-		        try {
-		            clientSocket = new Socket( serverIP , serverPort );
-		            is = clientSocket.getInputStream();
-		        } catch (IOException ex) {
-		        	System.out.println("Server IO exception.");
-		        }
-
-		        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		        if (is != null) {
-
-		            FileOutputStream fos = null;
-		            BufferedOutputStream bos = null;
-		            try {
-		                fos = new FileOutputStream( fileOutput );
-		                bos = new BufferedOutputStream(fos);
-		                bytesRead = is.read(aByte, 0, aByte.length);
-
-		                do {
-		                        baos.write(aByte);
-		                        bytesRead = is.read(aByte);
-		                } while (bytesRead != -1);
-
-		                bos.write(baos.toByteArray());
-		                bos.flush();
-		                bos.close();
-		                clientSocket.close();
-		            } catch (IOException ex) {
-		            	System.out.println("Client IO exception for file receive");
-		            }
-		        }
 	            
 	            
 	        } catch (Exception e) {
@@ -125,6 +72,30 @@ public class PeerClient {
 					}
 			    }
 			}
+	    }
+	    
+	    
+	    static void sameLookUpTest () throws RemoteException{
+	    	
+	    	
+	    }
+	    
+	    static void diffLookUpTest () throws RemoteException{
+	    	
+	    	
+	    }
+	    
+	    static void runningTest () throws RemoteException{
+	    	System.out.println(myPeerID);
+            
+            index.registerFile(myPeerID, "foo1.txt");
+            index.registerFile(myPeerID, "foo6.txt");
+            index.registerFile(myPeerID, "foo7.txt");
+            System.out.println(index.lookUp("foo6.txt"));
+            index.removeFile(myPeerID, "foo6.txt");
+            System.out.println(index.lookUp("foo6.txt"));
+            
+            index.deletePeer(myPeerID);
 	    }
 	
 
