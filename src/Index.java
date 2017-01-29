@@ -1,5 +1,6 @@
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 
 public interface Index extends Remote {
@@ -49,6 +50,13 @@ public interface Index extends Remote {
 	 * @throws RemoteException
 	 */
 	boolean removeFile(int peerId, String file_name) throws RemoteException;
+	
+	/**
+	 * @param peerId
+	 * @return index list of files
+	 * @throws RemoteException
+	 */
+	ArrayList<String> getFilesList(int peerId) throws RemoteException;
 	
 	/** Deletes peer from the index
 	 * @param peerId

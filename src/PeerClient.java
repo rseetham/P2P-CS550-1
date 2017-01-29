@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PeerClient {
 	
@@ -22,14 +23,16 @@ public class PeerClient {
 	    /**
 	     * @param args serverportno peerid hostport
 	     * serverportno - port no the peer's port is set up on
+	     * peerno - for tests to determine which files to ask for
 	     * peerid - peer id if this peer has already been registered
 	     * hostport - 
 	     */
 	    public static void main(String[] args) {
 
 	        int serverPort = (args.length < 1) ? 0 : Integer.parseInt(args[0]);
-	        myPeerID = (args.length < 2) ? 0 : Integer.parseInt(args[1]);
-	    	String host = (args.length < 3) ? null : args[2];
+	        int peerno = (args.length < 2) ? null : Integer.parseInt(args[1]);
+	        myPeerID = (args.length < 3) ? 0 : Integer.parseInt(args[2]);
+	    	String host = (args.length < 4) ? null : args[3];
 	    	System.out.println(host);
 	        try {
 	            Registry registry = LocateRegistry.getRegistry(host);
@@ -43,6 +46,8 @@ public class PeerClient {
 	            	index.setServerPort(myPeerID, serverPort);
 	            }
 	            else myPeerID = index.registerPeer(serverPort);
+	            
+	            ArrayList<String> fLookUp = filesToLookUp(peerno);
 	            
 	            setUpFiles();
 	            
@@ -60,7 +65,26 @@ public class PeerClient {
 	        
 	    }
 	    
-	    static void setUpFiles(){
+	    /**determine the files that this peer can look up
+	     * @param peerno used to determine the files it can look up
+	     * @return list of 
+	     */
+	    private static ArrayList<String> filesToLookUp(int peerno) {
+	    	ArrayList<String> files = new ArrayList<String>(23);
+	    	files.addAll(Arrays.asList("text_3.txt", "text_4.txt", "text_5.txt", "text_6.txt"));
+	    	ArrayList<Integer> peers = (ArrayList<Integer>) Arrays.asList(1,2,3);
+	    	peers.remove(new Integer(peerno));
+	    	peers.forEach(no -> {
+	    		for (int i = 0; i <= 9; i ++)
+	    			files.add("text_"+no+""+i+".txt");
+	    	});
+			return files;
+		}
+
+		/**
+		 * Registers all the files in the TestFiles dir of the client
+		 */
+		static void setUpFiles(){
 	    	File[] files = new File(Paths.get("../TestFiles/").toString()).listFiles();
 			for (File file : files) {
 			    if (file.isFile()) {
@@ -77,7 +101,11 @@ public class PeerClient {
 	    
 	    static void sameLookUpTest () throws RemoteException{
 	    	
+	    	long startTime = System.nanoTime();
 	    	
+	    	long estimatedTime = System.nanoTime() - startTime;
+	    	
+	    	System.out.println("Look up ");
 	    }
 	    
 	    static void diffLookUpTest () throws RemoteException{
