@@ -57,6 +57,8 @@ public class PeerClient {
 	            setUpFiles();
 	            
 	            sameLookUpTest(fLookUp);
+	            
+	            diffLookUpTest(fLookUp);
 	            //runningTest();
 	            //index.deletePeer(myPeerID);
 	            
@@ -76,13 +78,20 @@ public class PeerClient {
 	     */
 	    private static ArrayList<String> filesToLookUp(int peerno) {
 	    	ArrayList<String> files = new ArrayList<String>(23);
-	    	files.addAll(Arrays.asList("text_3.txt", "text_4.txt", "text_5.txt", "text_6.txt"));
-	    	ArrayList<Integer> peers = (ArrayList<Integer>) Arrays.asList(1,2,3);
+	    	files.add("text_3.txt");
+	    	files.add("text_4.txt");
+	    	files.add("text_5.txt");
+	    	files.add("text_6.txt");
+	    	ArrayList<Integer> peers = new ArrayList<Integer>();
+	    	peers.add(new Integer(1));
+	    	peers.add(new Integer(2));
+	    	peers.add(new Integer(3));
 	    	peers.remove(new Integer(peerno));
 	    	peers.forEach(no -> {
 	    		for (int i = 0; i <= 9; i ++)
 	    			files.add("text_"+no+""+i+".txt");
 	    	});
+	    	System.out.println(files);
 			return files;
 		}
 
@@ -108,12 +117,14 @@ public class PeerClient {
 	    	
 	    	int l = files.size();
 	    	String file = files.get(rand.nextInt(l));
+	    	System.out.println("random - "+file);
+	    	file = "text_3.txt";
 	    	long startTime = System.nanoTime();
-	    	for (int i  = 0; i < 1000; i++){
+	    	for (int i  = 0; i < 10; i++){
 	    		index.lookUp(file);
 	    	}
 	    	long estimatedTime = System.nanoTime() - startTime;	    	
-	    	System.out.println("Same Look up "+estimatedTime);
+	    	System.out.println("Same Look up "+estimatedTime/1000000000.0);
 	    }
 	    
 	    static void diffLookUpTest(ArrayList<String> files) throws RemoteException{
@@ -124,7 +135,7 @@ public class PeerClient {
 	    		index.lookUp(files.get(rand.nextInt(l)));
 	    	}
 	    	long estimatedTime = System.nanoTime() - startTime;	    	
-	    	System.out.println(" Different Look up "+estimatedTime);
+	    	System.out.println(" Different Look up "+estimatedTime/1000000000.0);
 	    }
 	    
 	    static void runningTest () throws RemoteException{

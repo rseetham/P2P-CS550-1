@@ -97,7 +97,7 @@ public class Server implements Index{
 					filesIndex.get(file_name).add(peerId);
 				return true;
 			}
-			// if file is present in filesIndex create list and add peer to list
+			// if file is not present in filesIndex create list and add peer to list
 			ArrayList<Integer> al = new ArrayList<Integer>();
 			al.add(peerId);
 			filesIndex.put(file_name, al);
@@ -119,8 +119,8 @@ public class Server implements Index{
 			// Returns a random peer server ip that has the file by checking fileIndex
 			ArrayList<Integer> peerlist = filesIndex.get(file_name);
 			int randomPeer = ThreadLocalRandom.current().nextInt(peerlist.size());
-			System.out.println(file_name + "is in "+ randomPeer);
-			//System.out.println(filesIndex);			
+			//System.out.println(file_name + " is in "+ randomPeer);
+			//System.out.println(ThreadLocalRandom.current().nextInt(10));			
 			return peers.get(peerlist.get(randomPeer)).getServerIp();
 		}
 		return null;
