@@ -5,7 +5,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -95,6 +94,7 @@ public class Server implements Index{
 				// Add file if peer is not already present as having the file
 				if (!list.contains(peerId))
 					filesIndex.get(file_name).add(peerId);
+				System.out.println("Registered File - file : "+ file_name + " on peer : "+ peerId);
 				return true;
 			}
 			// if file is not present in filesIndex create list and add peer to list
@@ -102,8 +102,6 @@ public class Server implements Index{
 			al.add(peerId);
 			filesIndex.put(file_name, al);
 			System.out.println("Registered File - file : "+ file_name + " on peer : "+ peerId);
-		    //System.out.println(filesIndex);
-		    //System.out.println(peer);
 			return true;			
 		}
 		catch(Exception e){System.out.println(e);}
@@ -118,9 +116,7 @@ public class Server implements Index{
 		if (filesIndex.containsKey(file_name)){
 			// Returns a random peer server ip that has the file by checking fileIndex
 			ArrayList<Integer> peerlist = filesIndex.get(file_name);
-			int randomPeer = ThreadLocalRandom.current().nextInt(peerlist.size());
-			//System.out.println(file_name + " is in "+ randomPeer);
-			//System.out.println(ThreadLocalRandom.current().nextInt(10));			
+			int randomPeer = ThreadLocalRandom.current().nextInt(peerlist.size());			
 			return peers.get(peerlist.get(randomPeer)).getServerIp();
 		}
 		return null;
@@ -184,9 +180,7 @@ public class Server implements Index{
 		peers.remove(peerId);
 		filesIndex.values().forEach((list) -> list.remove(new Integer(peerId)));	
 		filesIndex.values().removeIf(Objects::isNull);
-		System.out.println("delete peer");
-		System.out.println(filesIndex);
-	    System.out.println(peers);
+		System.out.println("Deleted peer "+peerId);
 		return true;
 	}
 
