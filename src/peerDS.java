@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class peerDS {
@@ -9,15 +10,9 @@ public class peerDS {
 	String peerIP;
 	String directoryName = "C:\\"+peerID+"\\";
 	ArrayList<String> oldFileList;
-	
-	int registerToServer(){
-		updateFilelist(directoryName);
-		return -1;
-	}
 
-	void retrive(String filename){
-		final String serverIP = "127.0.0.1";
-		final String fileOutput = directoryName+filename;
+	public void retrive(String filename){
+		String fileOutput = directoryName+filename;
 
 		byte[] aByte = new byte[1];
 		int bytesRead;
@@ -26,7 +21,7 @@ public class peerDS {
 		InputStream is = null;
 
 		try {
-			clientSocket = new Socket( serverIP , serverPort );
+			clientSocket = new Socket( peerIP , serverPort );
 			is = clientSocket.getInputStream();
 		} catch (IOException ex) {
 			System.out.println("Client Retrieve IO exception.");
@@ -75,15 +70,19 @@ public class peerDS {
 		this.peerIP = pIP;
 	}
 	
-	void updateFilelist(String directoryName){//on internal deletes, let server know to update its registry
-		
+	public void updateFilelist(String directoryName){//on internal deletes, let server know to update its registry
+		Server myServer = new Server();
         File directory = new File(directoryName);
         File[] fList = directory.listFiles();
         boolean fileExists = false;
         for (File file : fList){
             if (file.isFile()){
             	if(oldFileList.contains(file.getName())==false){
-            		//TODO remove file
+            		try {
+						myServer.removeFile(peerID, file.getName());
+					} catch (RemoteException e) {
+						System.out.println("File Removal Error");
+					}
             	}
             }
         }

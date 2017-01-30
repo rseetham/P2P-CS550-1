@@ -3,44 +3,47 @@ import java.net.*;
 
 class TCPClient {
 
-    private final static String serverIP = "127.0.0.1";
-    private final static int serverPort = 3248;
-    private final static String fileOutput = "C:\\testout.pdf";
-
     public static void main(String args[]) {
         byte[] aByte = new byte[1];
         int bytesRead;
+        
+        int serverPort = (args.length < 1) ? 0 : Integer.parseInt(args[0]);
+        int myPeerID = (args.length < 2) ? 0 : Integer.parseInt(args[1]);
+    	String serverIP = (args.length < 3) ? null : args[2];
+    	String fileOutput = (args.length < 4) ? null : args[3];
 
-        Socket clientSocket = null;
-        InputStream is = null;
+        Socket socClient = null;
+        InputStream inS = null;
 
         try {
-            clientSocket = new Socket( serverIP , serverPort );
-            is = clientSocket.getInputStream();
+            socClient = new Socket( serverIP , serverPort );
+            inS = socClient.getInputStream();
         } catch (IOException ex) {
         	System.out.println("Server IO exception.");
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        if (is != null) {
-
+        if (inS != null) {
             FileOutputStream fos = null;
             BufferedOutputStream bos = null;
             try {
                 fos = new FileOutputStream( fileOutput );
                 bos = new BufferedOutputStream(fos);
-                bytesRead = is.read(aByte, 0, aByte.length);
+                bytesRead = inS.read(aByte, 0, aByte.length);
 
                 do {
                         baos.write(aByte);
-                        bytesRead = is.read(aByte);
+                        bytesRead = inS.read(aByte);
                 } while (bytesRead != -1);
 
                 bos.write(baos.toByteArray());
-                bos.flush();
-                bos.close();
-                clientSocket.close();
+                if (fos != null) fos.close();
+                if (bos != null) {
+                	bos.flush();
+                	bos.close();
+                }
+                if (socClient != null) socClient.close();
             } catch (IOException ex) {
             	System.out.println("Client IO exception for file receive");
             }

@@ -3,29 +3,31 @@ import java.net.*;
 
 class TCPServer {
 
-    private final static String fileToSend = "C:\\test1.txt";
-
     public static void main(String args[]) {
 
         while (true) {
-		    int serverPort = 1100;
-            ServerSocket welcomeSocket = null;
-            Socket connectionSocket = null;
-            BufferedOutputStream outToClient = null;
+        	System.out.println("Waiting...\n");
+            ServerSocket socServer = null;
+            Socket socConn = null;
+            BufferedOutputStream bos = null;
+            
+            int serverPort = (args.length < 1) ? 0 : Integer.parseInt(args[0]);
+            int myPeerID = (args.length < 2) ? 0 : Integer.parseInt(args[1]);
+        	String fileToSend = (args.length < 3) ? null : args[2];
+            
             System.out.println("Server running at port "+serverPort);
             try {
-                welcomeSocket = new ServerSocket(serverPort);
-                connectionSocket = welcomeSocket.accept();
-                outToClient = new BufferedOutputStream(connectionSocket.getOutputStream());
+                socServer = new ServerSocket(serverPort);
+                socConn = socServer.accept();
+                bos = new BufferedOutputStream(socConn.getOutputStream());
             } catch (IOException ex) {
             	System.out.println("Server IO exception.");
             }
 
-            if (outToClient != null) {
-                File myFile = new File( fileToSend );
-                byte[] mybytearray = new byte[(int) myFile.length()];
-
-                FileInputStream fis = null;
+            if (bos != null) {
+            	FileInputStream fis = null;
+            	File myFile = new File( fileToSend );
+                byte[] fileArr = new byte[(int) myFile.length()];
 
                 try {
                     fis = new FileInputStream(myFile);
@@ -35,13 +37,12 @@ class TCPServer {
                 BufferedInputStream bis = new BufferedInputStream(fis);
 
                 try {
-                    bis.read(mybytearray, 0, mybytearray.length);
-                    outToClient.write(mybytearray, 0, mybytearray.length);
-                    outToClient.flush();
-                    outToClient.close();
-                    connectionSocket.close();
+                    bis.read(fileArr, 0, fileArr.length);
+                    bos.write(fileArr, 0, fileArr.length);
+                    bos.flush();
+                    bos.close();
+                    socConn.close();
 
-                    // File sent, exit the main method
                     return;
                 } catch (IOException ex) {
                 	System.out.println("Server IO exception for file send");
